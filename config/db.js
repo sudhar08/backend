@@ -3,10 +3,10 @@ require('dotenv').config();
 
 // MySQL Connection
 const db = mysql.createConnection({
-  host: process.env.DB_HOST,
-  user: process.env.DB_USER,
-  password: process.env.DB_PASS,
-  database: process.env.DB_NAME,
+  host: "sudharsanan.mysql.database.azure.com",
+  user: "sudhar08",
+  password: "androidandroid023@",
+  database: "jobdb",
 });
 
 db.connect((err) => {
