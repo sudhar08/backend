@@ -3,10 +3,10 @@ require('dotenv').config();
 
 // MySQL Connection
 const db = mysql.createConnection({
-  host: "sudharsanan.mysql.database.azure.com",
-  user: "sudhar08",
-  password: "androidandroid023@",
-  database: "jobdb",
+  host: "db.cry6uk8ew5bi.ap-south-1.rds.amazonaws.com",
+  user: "admin",
+  password: "Adminadmin",
+  database: "jobs",
 });
 
 db.connect((err) => {
