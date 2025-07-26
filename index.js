@@ -1,27 +1,22 @@
-const express = require('express');
-const dotenv = require('dotenv');
-const cors = require('cors');
-const db = require('./config/db');
-const jobRoutes = require('./routes/jobroutes');
 
-dotenv.config();
+
+require('dotenv').config();
+const express = require('express');
+const cors = require('cors');
+
+const jobRouter = require('./routes/jobroutes'); // <-- Check this path
+
 const app = express();
-//const PORT = process.env.PORT || 3000;
+const PORT = 8000;
 
 // Middleware
-app.use(express.json());
-
-// Enable CORS for all routes
 app.use(cors());
+app.use(express.json()); // <-- Make sure this line exists
 
-// Routes
-app.use('/api/jobs', jobRoutes);
+// Mount the router
+app.use('/api', jobRouter); // <-- Make sure this line exists and has '/api'
 
-app.get('/', (req, res) => {
-  res.send('Welcome to the Job API');
-});
-
-// Start server
-app.listen(5000, '0.0.0.0', () => {
-  console.log(`🚀 Server running on http://0.0.0.0:${5000}`);
+// Start the server
+app.listen(PORT, () => {
+  console.log(`✅ Express server running on http://localhost:${PORT}`);
 });

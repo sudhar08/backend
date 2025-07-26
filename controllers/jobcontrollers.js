@@ -1,95 +1,53 @@
-const Job = require('../model/jobmodels');
+// src/controllers/job.controller.js
 
-// Get all jobs
-const getJobs = (req, res) => {
-  Job.getAllJobs((err, results) => {
-    if (err) return res.status(500).json({ error: err.message });
-    res.status(200).json(results);
-  });
-};
+const JobModel = require('../model/jobmodels');
 
-// Get job by ID
-const getJobById = (req, res) => {
+// --- GET All Jobs ---
+async function httpGetAllJobs(req, res) {
+  const { data, error } = await JobModel.getAllJobs();
+  if (error) return res.status(500).json({ error: error.message });
+  return res.status(200).json(data);
+}
+
+// --- GET Job by ID ---
+async function httpGetJobById(req, res) {
   const { id } = req.params;
-  Job.getJobById(id, (err, results) => {
-    if (err) return res.status(500).json({ error: err.message });
-    if (results.length === 0) return res.status(404).json({ message: "Job not found" });
-    res.status(200).json(results[0]);
-  });
-};
+  const { data, error } = await JobModel.getJobById(id);
+  if (error) return res.status(500).json({ error: error.message });
+  if (!data) return res.status(404).json({ error: 'Job not found' });
+  return res.status(200).json(data);
+}
 
-// Create a new job
-// Create a new job
-const createJob = (req, res) => {
-    const {
-      title,
-      company,
-      location,
-      jobType,
-      minSalary,
-      maxSalary,
-      applicationDeadline,
-      jobDescription,
-    } = req.body;
-  
-    // Validate required fields
-    if (
-      !title ||
-      !company ||
-      !location ||
-      !jobType ||
-      !minSalary ||
-      !maxSalary ||
-      !applicationDeadline ||
-      !jobDescription
-    ) {
-      return res.status(400).json({ message: 'All fields are required' });
-    }
-  
-    // Capture job data
-    const jobData = {
-      job_title: title,
-      company_name: company,
-      location,
-      job_type: jobType,
-      min_salary: minSalary,
-      max_salary: maxSalary,
-      application_deadline: applicationDeadline,
-      job_description: jobDescription,
-      created_at: new Date(), // Current timestamp
-    };
-    console.log("🔍 Received jobData:", req.body);
+// --- POST New Job ---
+async function httpCreateJob(req, res) {
+  const newJob = req.body;
+  const { data, error } = await JobModel.createJob(newJob);
+  if (error) return res.status(500).json({ error: error.message });
+  return res.status(201).json(data);
+}
 
-    // Call the model to insert the job
-    Job.createJob(jobData, (err, results) => {
-      if (err) {
-        console.error('Error inserting job:', err);
-        return res.status(500).json({ error: 'Internal server error' });
-      }
-      res.status(201).json({ id: results.insertId, ...jobData });
-    });
-  };
-  
-
-// Update a job
-const updateJob = (req, res) => {
+// --- PUT (Update) Job ---
+async function httpUpdateJob(req, res) {
   const { id } = req.params;
-  const jobData = req.body;
-  Job.updateJob(id, jobData, (err, results) => {
-    if (err) return res.status(500).json({ error: err.message });
-    if (results.affectedRows === 0) return res.status(404).json({ message: "Job not found" });
-    res.status(200).json({ id, ...jobData });
-  });
-};
+  const jobUpdates = req.body;
+  const { data, error } = await JobModel.updateJob(id, jobUpdates);
+  if (error) return res.status(500).json({ error: error.message });
+  if (!data) return res.status(404).json({ error: 'Job not found' });
+  return res.status(200).json(data);
+}
 
-// Delete a job
-const deleteJob = (req, res) => {
+// --- DELETE Job ---
+async function httpDeleteJob(req, res) {
   const { id } = req.params;
-  Job.deleteJob(id, (err, results) => {
-    if (err) return res.status(500).json({ error: err.message });
-    if (results.affectedRows === 0) return res.status(404).json({ message: "Job not found" });
-    res.status(200).json({ message: "Job deleted successfully" });
-  });
-};
+  const { error } = await JobModel.deleteJob(id);
+  if (error) return res.status(500).json({ error: error.message });
+  return res.status(204).send(); // 204 No Content
+}
 
-module.exports = { getJobs, getJobById, createJob, updateJob, deleteJob };
+module.exports = {
+  httpGetAllJobs,
+  httpGetJobById,
+  httpCreateJob,
+  httpUpdateJob,
+  httpDeleteJob,
+};

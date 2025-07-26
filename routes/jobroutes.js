@@ -1,12 +1,25 @@
+// src/routes/job.routes.js
+
 const express = require('express');
-const router = express.Router();
-const jobController = require('../controllers/jobcontrollers');
+const {
+  httpGetAllJobs,
+  httpGetJobById,
+  httpCreateJob,
+  httpUpdateJob,
+  httpDeleteJob,
+} = require('../controllers/jobcontrollers');
 
-// Job Routes
-router.get('/', jobController.getJobs);
-router.get('/:id', jobController.getJobById);
-router.post('/', jobController.createJob);
-router.put('/:id', jobController.updateJob);
-router.delete('/:id', jobController.deleteJob);
+const jobRouter = express.Router();
 
-module.exports = router;
+// Route for getting all jobs and creating a new job
+jobRouter.route('/jobs')
+  .get(httpGetAllJobs)
+  .post(httpCreateJob);
+
+// Routes for a specific job by its ID
+jobRouter.route('/jobs/:id')
+  .get(httpGetJobById)
+  .put(httpUpdateJob)
+  .delete(httpDeleteJob);
+
+module.exports = jobRouter;
